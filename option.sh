@@ -13,8 +13,15 @@ sudo apt-get -y install qt4-dev-tools libatlas-base-dev
 # Need to get an older version of OpenCV because version 4 has errors
 pip3 install opencv-python==3.4.6.27
 pip install pandas
-pip install --index-url https://google-coral.github.io/py-repo/ tflite_runtime
 
+# for linux
+echo "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main" | sudo tee /etc/apt/sources.list.d/coral-edgetpu.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install python3-tflite-runtime
+
+# for other system
+pip install --index-url https://google-coral.github.io/py-repo/ tflite_runtime
 
 python OD.py --modeldir "model\kamo01"
 python OD.py --modeldir "model\kamo01" --video "testvideo\trim.mp4"
