@@ -5,3 +5,8 @@ echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" |
 sudo apt update && sudo apt install bazel
 sudo apt update && sudo apt full-upgrade
 sudo apt install bazel-1.0.0
+
+
+curl bazel-1.0.0-installer-linux-x86_64.sh
+chmod +x bazel-1.0.0-installer-linux-x86_64.sh
+./bazel-1.0.0-installer-linux-x86_64.sh --user
