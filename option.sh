@@ -22,6 +22,7 @@ sudo apt-get install python3-tflite-runtime
 
 # other
 pip3 install https://github.com/google-coral/pycoral/releases/download/release-frogfish/tflite_runtime-2.5.0-cp37-cp37m-linux_armv7l.whl
+pip install https://github.com/google-coral/pycoral/releases/download/v2.0.0/tflite_runtime-2.5.0.post1-cp37-cp37m-linux_armv7l.whl
 
 # for other system
 pip install --index-url https://google-coral.github.io/py-repo/ tflite_runtime
