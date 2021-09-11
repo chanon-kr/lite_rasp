@@ -1,0 +1,5 @@
+{
+"0" : "nocoat",
+"1" : "pinabnormal",
+"2" : "crack"
+}
