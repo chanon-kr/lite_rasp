@@ -8,7 +8,6 @@ import cv2
 import numpy as np
 import sys, json
 import importlib.util
-import pandas as pd
 
 
 # # Define and parse input arguments
@@ -121,7 +120,6 @@ else :
 imW = video.get(cv2.CAP_PROP_FRAME_WIDTH)
 imH = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
-print(pd.Timestamp.now())
 count_frame = 0
 while(video.isOpened()):
     count_frame += 1
@@ -190,9 +188,6 @@ while(video.isOpened()):
     if cv2.waitKey(1) == ord('q'):
         print('break')
         break
-
-print(pd.Timestamp.now())
-
 
 # Clean up
 video.release()
