@@ -115,7 +115,7 @@ input_std = 127.5
 # Prepare Out Folder
 print(MODEL_NAME, VIDEO_NAME)
 outfolder = 'temp_output/{}'.format(MODEL_NAME.split('/')[-1])
-subfolder = VIDEO_NAME.split('\\')[-1].split('.')[0]
+subfolder = VIDEO_NAME.split('\\')[-1].split('/')[-1].split('.')[0]
 if not os.path.isdir(outfolder) : 
     os.mkdir(outfolder)
 
