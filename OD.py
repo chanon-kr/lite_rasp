@@ -24,6 +24,10 @@ parser.add_argument('--video', help='Name of the video file',
                     default='0')
 parser.add_argument('--edgetpu', help='Use Coral Edge TPU Accelerator to speed up detection',
                     action='store_true')
+parser.add_argument('--xcrop', help='Crop Frame in X',
+                    default='0,1')
+parser.add_argument('--ycrop', help='Crop Frame in Y',
+                    default='0,1')
 
 args = parser.parse_args()
 MODEL_NAME = args.modeldir
@@ -31,6 +35,8 @@ GRAPH_NAME = args.graph
 LABELMAP_NAME = args.labels
 VIDEO_NAME = args.video
 min_conf_threshold = float(args.threshold)
+x1,x2 = (float(i) for i in args.xcrop.split(','))
+y1,y2 = (float(i) for i in args.ycrop.split(','))
 # use_TPU = args.edgetpu
 
 ## For Local Test
@@ -119,6 +125,7 @@ else :
     video = cv2.VideoCapture(0)
 imW = video.get(cv2.CAP_PROP_FRAME_WIDTH)
 imH = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+y1,y2,x1,x2 = int(imH*y1),int(imH*y2), int(imW*x1),int(imW*x2)
 
 count_frame = 0
 while(video.isOpened()):
@@ -129,8 +136,10 @@ while(video.isOpened()):
     if not ret:
         print('Reached the end of the video!')
         break
+    # frame = frame[y1:y2,x1:x2]
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    frame_resized = cv2.resize(frame_rgb, (width, height))
+    frame_resized = frame_rgb[y1:y2,x1:x2]
+    frame_resized = cv2.resize(frame_resized, (width, height))
     input_data = np.expand_dims(frame_resized, axis=0)
 
     # Normalize pixel values if using a floating model (i.e. if model is non-quantized)
@@ -160,10 +169,10 @@ while(video.isOpened()):
             show += 1
             # Get bounding box coordinates and draw box
             # Interpreter can return coordinates that are outside of image dimensions, need to force them to be within image using max() and min()
-            ymin = int(max(1,(boxes[i][0] * imH)))
-            xmin = int(max(1,(boxes[i][1] * imW)))
-            ymax = int(min(imH,(boxes[i][2] * imH)))
-            xmax = int(min(imW,(boxes[i][3] * imW)))
+            ymin = int(max(1,(boxes[i][0] * imH))) + y1
+            xmin = int(max(1,(boxes[i][1] * imW))) + x1
+            ymax = int(min(imH,(boxes[i][2] * imH))) + y1
+            xmax = int(min(imW,(boxes[i][3] * imW))) + x1
 
             cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), (10, 255, 0), 4)
 
@@ -174,7 +183,7 @@ while(video.isOpened()):
             label_ymin = max(ymin, labelSize[1] + 10) # Make sure not to draw label too close to top of window
             cv2.rectangle(frame, (xmin, label_ymin-labelSize[1]-10), (xmin+labelSize[0], label_ymin+baseLine-10), (255, 255, 255), cv2.FILLED) # Draw white box to put label text in
             cv2.putText(frame, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
-
+    cv2.rectangle(frame, (x2,y2), (x1,y1), (0, 255, 255), 2)
     # All the results have been drawn on the frame, so it's time to display it.
 #     cv2.imshow('Object detector', frame)
 
