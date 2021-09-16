@@ -179,8 +179,8 @@ while(video.isOpened()):
             show += 1
             # Get bounding box coordinates and draw box
             # Interpreter can return coordinates that are outside of image dimensions, need to force them to be within image using max() and min()
-            ymin = int(max(1,(boxes[i][0] * (x2-x1)))) + y1
-            xmin = int(max(1,(boxes[i][1] * imW))) + x1
+            ymin = int(max(1,(boxes[i][0] * (y2-y1)))) + y1
+            xmin = int(max(1,(boxes[i][1] * (x2-x1)))) + x1
             ymax = int(min((y2-y1),(boxes[i][2] * (y2-y1)))) + y1
             xmax = int(min((x2-x1),(boxes[i][3] * (x2-x1)))) + x1
 
