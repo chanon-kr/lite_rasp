@@ -148,8 +148,8 @@ while(video.isOpened()):
         print('Reached the end of the video!')
         break
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    frame_resized = cv2.resize(frame_rgb, (width, height))
-    frame_resized = frame_resized[y1:y2,x1:x2]
+    frame_resized = frame_rgb[y1:y2,x1:x2]
+    frame_resized = cv2.resize(frame_resized, (width, height))
     input_data = np.expand_dims(frame_resized, axis=0)
 
     # Normalize pixel values if using a floating model (i.e. if model is non-quantized)
