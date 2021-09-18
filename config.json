@@ -1,0 +1,16 @@
+{
+    "modeldir" : "model/kamo01",
+    "graph" : "model.tflite",
+    "labels" : "label.txt",
+    "threshold" : 0.4,
+    "video" : "0",
+    "edgetpu" : 0,
+    "xcrop" : "0.2,0.8",
+    "ycrop" : "0.2,0.8",
+    "save_slot" : 2,
+    "gcp_projectid" : "",
+    "gcp_bucket" : "",
+    "gcp_folder" : "",
+    "gcp_credential" : "credential.json",
+    "save_size" : 1
+}
