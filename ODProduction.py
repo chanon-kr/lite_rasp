@@ -152,10 +152,11 @@ while(video.isOpened()):
                             , credential = gcp_credential )
 
         # Update Time
-        with open("lastupload.txt" , "w") as f :
+        with open("tmp/lastupload.txt" , "w") as f :
             f.write(now_slot)
-        gcs.upload(bucket_file = '{}/{}'.format(gcp_folder,"lastupload.txt")
-                    ,local_file = "lastupload_begin.txt")
+        gcs.upload(bucket_file = '{}/{}'.format(gcp_folder,"lastupload_begin.txt")
+                    ,local_file = "tmp/lastupload.txt")
+        os.remove("tmp/lastupload.txt")
 
         # Save as Video (Save Space)
         if len(fps_list) > 0 : 
@@ -176,10 +177,11 @@ while(video.isOpened()):
         print('End Save at',datetime.now())
 
         # Update Time
-        with open("lastupload.txt" , "w") as f :
+        with open("tmp/lastupload.txt" , "w") as f :
             f.write(now_slot)
-        gcs.upload(bucket_file = '{}/{}'.format(gcp_folder,"lastupload.txt")
-                    ,local_file = "lastupload_end.txt")
+        gcs.upload(bucket_file = '{}/{}'.format(gcp_folder,"lastupload_end.txt")
+                    ,local_file = "tmp/lastupload.txt")
+        os.remove("tmp/lastupload.txt")
 
     now_slot = (now.replace(minute = 0) + timedelta(minutes = int(now_minute/save_slot)*save_slot)).strftime('%Y%m%d%H%M')
     show = 0
