@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+## I Modify This Script from Script from Link Below
+### https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi/blob/master/TFLite_detection_video.py
+
 # Import packages
 import os,json ,cv2 , sys, argparse, shutil
 import numpy as np
