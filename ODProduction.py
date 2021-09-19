@@ -8,7 +8,6 @@ import importlib.util
 from datetime import datetime, timedelta
 from py_topping.data_connection.gcp import da_tran_bucket
 from glob import glob
-# import moviepy.video.io.ImageSequenceClip
 
 with open('config.json', 'rb') as f :
     config = json.load(f)
@@ -64,8 +63,6 @@ PATH_TO_CKPT = os.path.join(CWD_PATH,MODEL_NAME,GRAPH_NAME)
 PATH_TO_LABELS = os.path.join(CWD_PATH,MODEL_NAME,LABELMAP_NAME)
 
 # Load the label map
-# with open(PATH_TO_LABELS, 'r') as f:
-#     labels = [line.strip() for line in f.readlines()]
 with open(PATH_TO_LABELS, 'rb') as f:
     labels = json.load(f)
 labels = {int(i) : j for i, j in labels.items()}
@@ -100,16 +97,6 @@ floating_model = (input_details[0]['dtype'] == np.float32)
 input_mean = 127.5
 input_std = 127.5
 
-# # Prepare Out Folder
-# print(MODEL_NAME, VIDEO_NAME)
-# outfolder = 'temp_output/{}'.format(MODEL_NAME.split('/')[-1])
-# subfolder = VIDEO_NAME.split('\\')[-1].split('/')[-1].split('.')[0] + '_' + str(min_conf_threshold).replace('.','')
-# if not os.path.isdir(outfolder) : 
-#     os.mkdir(outfolder)
-
-# if not os.path.isdir(os.path.join(outfolder,subfolder)) :
-#     os.mkdir(os.path.join(outfolder,subfolder))
-
 
 # Open video file
 if VIDEO_NAME != '0' :
@@ -124,6 +111,7 @@ now = datetime.now()
 now_minute = now.minute
 now_slot = (now.replace(minute = 0) + timedelta(minutes = int(now_minute/save_slot)*save_slot)).strftime('%Y%m%d%H%M')
 
+# # Prepare Out Folder
 for i in ['tmp','tmp/Found','tmp/All'] :
     if not os.path.isdir(i) : os.mkdir(i)
 
@@ -175,8 +163,6 @@ while(video.isOpened()):
             out.release()
             del img_array_i
 
-            # clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(glob('tmp/All/*.png'), fps=fps)
-            # clip.write_videofile('tmp/clip.mp4')
             gcs.upload(bucket_file = '{}/Clip/clip_{}.avi'.format(gcp_folder,now_slot)
                         , local_file = 'tmp/clip.avi')
             for i in glob('tmp/All/*.png') : os.remove(i)
