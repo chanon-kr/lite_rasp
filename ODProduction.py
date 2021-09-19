@@ -15,7 +15,7 @@ from glob import glob
 with open('config.json', 'rb') as f :
     config = json.load(f)
 
-# # Define and parse input arguments
+## Define and parse input arguments
 MODEL_NAME = config["modeldir"]
 GRAPH_NAME = config["graph"]
 LABELMAP_NAME = config["labels"]
@@ -30,7 +30,7 @@ gcp_projectid = config["gcp_projectid"]
 gcp_bucket = config["gcp_bucket"]
 gcp_credential = config["gcp_credential"]
 save_size = float(config["save_size"])
-show_window = float(config["show_window"])
+show_window = bool(config["show_window"])
 
 # In[2]:
 
@@ -47,12 +47,6 @@ else:
     from tensorflow.lite.python.interpreter import Interpreter
     if use_TPU:
         from tensorflow.lite.python.interpreter import load_delegate
-
-# If using Edge TPU, assign filename for Edge TPU model
-if use_TPU:
-    # If user has specified the name of the .tflite file, use that name, otherwise use default 'edgetpu.tflite'
-    if (GRAPH_NAME == 'detect.tflite'):
-        GRAPH_NAME = 'edgetpu.tflite'   
 
 # Get path to current working directory
 CWD_PATH = os.getcwd()
@@ -95,12 +89,9 @@ input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 height = input_details[0]['shape'][1]
 width = input_details[0]['shape'][2]
-
 floating_model = (input_details[0]['dtype'] == np.float32)
-
 input_mean = 127.5
 input_std = 127.5
-
 
 # Open video file
 if VIDEO_NAME != '0' :
@@ -108,18 +99,20 @@ if VIDEO_NAME != '0' :
 else :
     video = cv2.VideoCapture(0)
 
+# Video Size
 imW = video.get(cv2.CAP_PROP_FRAME_WIDTH)
 imH = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
 y1,y2,x1,x2 = int(imH*y1),int(imH*y2), int(imW*x1),int(imW*x2)
+
+# Prepare Save Slot
 now = datetime.now()
 now_minute = now.minute
 now_slot = (now.replace(minute = 0) + timedelta(minutes = int(now_minute/save_slot)*save_slot)).strftime('%Y%m%d%H%M')
+fps_list = []
 
-# # Prepare Out Folder
+# Prepare Out Folder
 for i in ['tmp','tmp/Found','tmp/All'] :
     if not os.path.isdir(i) : os.mkdir(i)
-
-fps_list = []
 
 while(video.isOpened()):
     # Acquire frame and resize to expected shape [1xHxWx3]
@@ -190,6 +183,7 @@ while(video.isOpened()):
     now_slot = (now.replace(minute = 0) + timedelta(minutes = int(now_minute/save_slot)*save_slot)).strftime('%Y%m%d%H%M')
     show = 0
     
+    # Prep Image
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     frame_resized = frame_rgb[y1:y2,x1:x2]
     frame_resized = cv2.resize(frame_resized, (width, height))
@@ -203,18 +197,18 @@ while(video.isOpened()):
     interpreter.set_tensor(input_details[0]['index'],input_data)
     interpreter.invoke()
 
+    # Solve Error (I think it's a bug) from some TFlite model
     if 'lite' not in MODEL_NAME :
         # Retrieve detection results : GCP AutoML
         boxes = interpreter.get_tensor(output_details[0]['index'])[0] # Bounding box coordinates of detected objects
         classes = interpreter.get_tensor(output_details[1]['index'])[0] # Class index of detected objects
         scores = interpreter.get_tensor(output_details[2]['index'])[0] # Confidence of detected objects
     else :
-        # For Some TFLite : efficientdet_lite0 - 2
+        # For Some TFLite : efficientdet_lite0, 1, 2
         boxes = interpreter.get_tensor(output_details[1]['index'])[0] # Bounding box coordinates of detected objects
         classes = interpreter.get_tensor(output_details[3]['index'])[0] # Class index of detected objects
         scores = interpreter.get_tensor(output_details[0]['index'])[0] # Confidence of detected objects
 
-    #num = interpreter.get_tensor(output_details[3]['index'])[0]  # Total number of detected objects (inaccurate and not needed)
     # Loop over all detections and draw detection box if confidence is above minimum threshold
     for i in range(len(scores)):
         if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
@@ -236,32 +230,31 @@ while(video.isOpened()):
             cv2.rectangle(frame, (xmin, label_ymin-labelSize[1]-10), (xmin+labelSize[0], label_ymin+baseLine-10), (255, 255, 255), cv2.FILLED) # Draw white box to put label text in
             cv2.putText(frame, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
     
+    # Add rectangle of Applied Area
     cv2.rectangle(frame, (x2,y2), (x1,y1), (0, 255, 255), 2)
     # All the results have been drawn on the frame, so it's time to display it.
+    if show_window : cv2.imshow('Object detector', frame)
     
     # To Save Space
     frame = cv2.resize(frame, (int(imW*save_size), int(imH*save_size)))
-
-    if show_window : cv2.imshow('Object detector', frame)
-
+    # Save image
+    savename = 'tmp/All/at_{}.png'.format(filename) 
+    cv2.imwrite(savename, frame)
+    # Duplicate Picture with Label in other folder 
     if show > 0 : 
         savename = 'tmp/Found/at_{}.png'.format(filename)
         cv2.imwrite(savename, frame)
-    else : 
-        pass
-    savename = 'tmp/All/at_{}.png'.format(filename) 
-    cv2.imwrite(savename, frame)
 
-    # Press 'q' to quit
-    if cv2.waitKey(1) == ord('q'):
-        print('break')
-        break
-    
     # Save for cal fps
     fps_cal = (datetime.now() - now).total_seconds()
     if fps_cal == 0 : fps_cal = 60
     else : fps_cal = 1/fps_cal
     fps_list.append(fps_cal)
+
+    # Press 'q' to quit
+    if cv2.waitKey(1) == ord('q'):
+        print('break')
+        break
 
 # Clean up
 video.release()
