@@ -161,6 +161,7 @@ while(video.isOpened()):
         # Save as Video (Save Space)
         if len(fps_list) > 0 : 
             fps = np.mean(fps_list)
+            print('Average FPS :',fps)
             clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(glob('tmp/All/*.png'), fps=fps)
             clip.write_videofile('tmp/All/clip.mp4')
             gcs.upload(bucket_file = '{}/Clip/clip_{}.mp4'.format(gcp_folder,now_slot)
