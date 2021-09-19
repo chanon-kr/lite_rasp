@@ -12,5 +12,7 @@
     "gcp_bucket" : "",
     "gcp_folder" : "",
     "gcp_credential" : "credential.json",
-    "save_size" : 1
+    "save_size" : 1,
+    "show_window" : 1,
+    "remark" : "Config everything and Rename this file as config.json"
 }
