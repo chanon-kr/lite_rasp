@@ -8,7 +8,7 @@ import importlib.util
 from datetime import datetime, timedelta
 from py_topping.data_connection.gcp import da_tran_bucket
 from glob import glob
-import moviepy.video.io.ImageSequenceClip
+# import moviepy.video.io.ImageSequenceClip
 
 with open('config.json', 'rb') as f :
     config = json.load(f)
@@ -162,16 +162,29 @@ while(video.isOpened()):
         if len(fps_list) > 0 : 
             fps = np.mean(fps_list)
             print('Average FPS :',fps)
-            clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(glob('tmp/All/*.png'), fps=fps)
-            clip.write_videofile('tmp/All/clip.mp4')
-            gcs.upload(bucket_file = '{}/Clip/clip_{}.mp4'.format(gcp_folder,now_slot)
-                        , local_file = 'tmp/clip.mp4')
+
+            img_array_i = []
+            for i in glob('tmp/All/*.png'):
+                img_i = cv2.imread(i)
+                height_i, width_i, layers_i = img_i.shape
+                size_i = (width_i,height_i)
+                img_array_i.append(img_i)
+            out = cv2.VideoWriter('tmp/clip.avi',cv2.VideoWriter_fourcc(*'DIVX'), fps, size_i)   
+            for i in range(len(img_array_i)):
+                out.write(img_array_i[i])
+            out.release()
+            del img_array_i
+
+            # clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(glob('tmp/All/*.png'), fps=fps)
+            # clip.write_videofile('tmp/clip.mp4')
+            gcs.upload(bucket_file = '{}/Clip/clip_{}.avi'.format(gcp_folder,now_slot)
+                        , local_file = 'tmp/clip.avi')
             for i in glob('tmp/All/*.png') : os.remove(i)
-            os.remove('tmp/clip.mp4')
+            os.remove('tmp/clip.avi')
 
         # Save Found Picture
         shutil.make_archive('tmp/Found', 'zip', 'tmp/Found')
-        gcs.upload(bucket_file = '{}/Found/Found_{}.mp4'.format(gcp_folder,now_slot)
+        gcs.upload(bucket_file = '{}/Found/Found_{}.zip'.format(gcp_folder,now_slot)
                     , local_file = 'tmp/Found.zip')
         # os.remove('tmp/Found.zip')
         for i in glob('tmp/Found/*.png') : os.remove(i)
@@ -206,7 +219,7 @@ while(video.isOpened()):
         classes = interpreter.get_tensor(output_details[1]['index'])[0] # Class index of detected objects
         scores = interpreter.get_tensor(output_details[2]['index'])[0] # Confidence of detected objects
     else :
-        # For Some TFLite : efficientdet_lite2
+        # For Some TFLite : efficientdet_lite0 - 2
         boxes = interpreter.get_tensor(output_details[1]['index'])[0] # Bounding box coordinates of detected objects
         classes = interpreter.get_tensor(output_details[3]['index'])[0] # Class index of detected objects
         scores = interpreter.get_tensor(output_details[0]['index'])[0] # Confidence of detected objects
