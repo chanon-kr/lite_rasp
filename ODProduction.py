@@ -30,6 +30,7 @@ gcp_projectid = config["gcp_projectid"]
 gcp_bucket = config["gcp_bucket"]
 gcp_credential = config["gcp_credential"]
 save_size = float(config["save_size"])
+show_window = float(config["show_window"])
 
 # In[2]:
 
@@ -240,6 +241,8 @@ while(video.isOpened()):
     
     # To Save Space
     frame = cv2.resize(frame, (int(imW*save_size), int(imH*save_size)))
+
+    if show_window : cv2.imshow('Object detector', frame)
 
     if show > 0 : 
         savename = 'tmp/Found/at_{}.png'.format(filename)
