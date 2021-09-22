@@ -11,6 +11,7 @@ sudo apt-get update
 sudo apt-get dist-upgrade
 
 # Library
+sudo apt install python3-pip
 pip3 install opencv-python 
 pip3 install py-topping
 pip3 install google-cloud-storage
