@@ -11,6 +11,7 @@ import cv2
 import numpy as np
 import sys, json
 import importlib.util
+from datetime import datetime
 
 
 # # Define and parse input arguments
@@ -129,12 +130,13 @@ else :
 imW = video.get(cv2.CAP_PROP_FRAME_WIDTH)
 imH = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
 y1,y2,x1,x2 = int(imH*y1),int(imH*y2), int(imW*x1),int(imW*x2)
-
+fps_list = []
 count_frame = 0
 while(video.isOpened()):
     count_frame += 1
     # Acquire frame and resize to expected shape [1xHxWx3]
     ret, frame = video.read()
+    now = datetime.now()
     show = 0
     if not ret:
         print('Reached the end of the video!')
@@ -195,6 +197,12 @@ while(video.isOpened()):
     #     print(count_frame)
     
     cv2.imshow('Object detector', frame)
+    # Save for cal fps
+    fps_cal = (datetime.now() - now).total_seconds()
+    if fps_cal == 0 : fps_cal = 60
+    else : fps_cal = 1/fps_cal
+    fps_list.append(fps_cal)
+    print('AVERAGE FPS :',np.mean(fps_list))
 
     # Press 'q' to quit
     if cv2.waitKey(1) == ord('q'):
