@@ -94,7 +94,10 @@ input_mean = 127.5
 input_std = 127.5
 
 # Open video file
-if VIDEO_NAME != '0' :
+if 'rtsp' in VIDEO_NAME :
+    video = cv2.VideoCapture()
+    video.open(VIDEO_NAME)
+elif VIDEO_NAME != '0' :
     video = cv2.VideoCapture(VIDEO_PATH)
 else :
     video = cv2.VideoCapture(0)
