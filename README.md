@@ -1,11 +1,12 @@
 # For test TF Lite with Raspberry PI
 
 ## Note
- - OD.py > Use for Run
- - env1.sh > Build Environment 1
- - env2.sh > Build Enbironment 2
+ - pi4install.sh > Build Environment 1
+ - testcamera.py > Just to test camera
+ - OD.py > Use for Run and Display
+ - ODfile.py > Use for Run and Save as files
+ - ODProduction.py > Use for Actual Run
 ## Model
- - 01 > GCP automl Edge
  - coco > Sample TFLte model from COCO data set
  - kamo01 > GCP automl Edge to detect Duck
- - lite01 > Model build from TFLite Model Maker (Net2)
+ - lite01 > TFLite Model Maker (Net2) to detect Duck...
