@@ -180,11 +180,6 @@ while(video.isOpened()):
                         , local_file = 'tmp/clip.avi')
             for i in glob('tmp/All/*.png') : os.remove(i)
             os.remove('tmp/clip.avi')
-        # Break Time
-        cal_restart = round((now - start_time).total_seconds()/3600,2)
-        print('start @ :',start_time ,'\nCurrent Run {}/{} hours'.format(cal_restart,restart_limit))
-        if cal_restart > restart_limit : break
-
         # Save Found Picture
         shutil.make_archive('tmp/Found', 'zip', 'tmp/Found')
         gcs.upload(bucket_file = '{}/Found/Found_{}.zip'.format(gcp_folder,now_slot)
@@ -199,6 +194,10 @@ while(video.isOpened()):
         gcs.upload(bucket_file = '{}/{}'.format(gcp_folder,"lastupload_end.txt")
                     ,local_file = "tmp/lastupload.txt")
         os.remove("tmp/lastupload.txt")
+        # Break Time
+        cal_restart = round((now - start_time).total_seconds()/3600,2)
+        print('start @ :',start_time ,'\nCurrent Run {}/{} hours'.format(cal_restart,restart_limit))
+        if cal_restart > restart_limit : break
 
     now_slot = (now.replace(minute = 0) + timedelta(minutes = int(now_minute/save_slot)*save_slot)).strftime('%Y%m%d%H%M')
     show = 0
