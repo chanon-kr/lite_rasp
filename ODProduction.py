@@ -182,6 +182,7 @@ while(video.isOpened()):
             os.remove('tmp/clip.avi')
         # Break Time
         cal_restart = (now - start_time).total_seconds()/3600
+        print('start @ :',start_time ,'\nCurrent Run {}/{} hours'.format(cal_restart,restart_limit))
         if cal_restart > restart_limit : break
 
         # Save Found Picture
