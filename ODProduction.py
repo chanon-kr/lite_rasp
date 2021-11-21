@@ -13,6 +13,21 @@ from py_topping.data_connection.gcp import da_tran_bucket
 from glob import glob
 
 with open('config.json', 'rb') as f :
+    prep_config = json.load(f)
+
+gcs = da_tran_bucket(project_id = prep_config["gcp_projectid"] 
+                    , bucket_name = prep_config["gcp_bucket"] 
+                    , credential = prep_config["gcp_credential"] )
+
+model_folder = prep_config["model_folder"].split('model')[-1]
+if not os.path.isdir('model{}'.format(model_folder)) : 
+    os.mkdir('model{}'.format(model_folder))
+
+for file in ['model.tflite','label.txt','model_config.json'] :
+    gcs.download(bucket_file = prep_config["model_folder"]  + '/{}'.format(file)
+                 , local_file = 'model{}/{}'.format(model_folder,file)) 
+
+with open('model{}/model_config.json'.format(model_folder), 'rb') as f :
     config = json.load(f)
 
 ## Define and parse input arguments
@@ -31,7 +46,7 @@ gcp_bucket = config["gcp_bucket"]
 gcp_credential = config["gcp_credential"]
 save_size = float(config["save_size"])
 show_window = bool(config["show_window"])
-
+restart_limit = float(config["restart_hour"])
 # In[2]:
 
 
@@ -117,11 +132,11 @@ fps_list = []
 for i in ['tmp','tmp/Found','tmp/All'] :
     if not os.path.isdir(i) : os.mkdir(i)
 
+start_time = datetime.now()
 while(video.isOpened()):
     # Acquire frame and resize to expected shape [1xHxWx3]
     ret, frame = video.read()
     now = datetime.now()
-
     if not ret:
         print('Reached the end of the video!')
         break
@@ -145,7 +160,6 @@ while(video.isOpened()):
         gcs.upload(bucket_file = '{}/{}'.format(gcp_folder,"lastupload_begin.txt")
                     ,local_file = "tmp/lastupload.txt")
         os.remove("tmp/lastupload.txt")
-
         # Save as Video (Save Space)
         if len(fps_list) > 0 : 
             fps = np.mean(fps_list)
@@ -162,11 +176,13 @@ while(video.isOpened()):
                 out.write(img_array_i[i])
             out.release()
             del img_array_i
-
             gcs.upload(bucket_file = '{}/Clip/clip_{}.avi'.format(gcp_folder,now_slot)
                         , local_file = 'tmp/clip.avi')
             for i in glob('tmp/All/*.png') : os.remove(i)
             os.remove('tmp/clip.avi')
+        # Break Time
+        cal_restart = (now - start_time).total_seconds()/3600
+        if cal_restart > restart_limit : break
 
         # Save Found Picture
         shutil.make_archive('tmp/Found', 'zip', 'tmp/Found')
