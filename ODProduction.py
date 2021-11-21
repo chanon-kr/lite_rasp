@@ -181,7 +181,7 @@ while(video.isOpened()):
             for i in glob('tmp/All/*.png') : os.remove(i)
             os.remove('tmp/clip.avi')
         # Break Time
-        cal_restart = (now - start_time).total_seconds()/3600
+        cal_restart = round((now - start_time).total_seconds()/3600,2)
         print('start @ :',start_time ,'\nCurrent Run {}/{} hours'.format(cal_restart,restart_limit))
         if cal_restart > restart_limit : break
 
