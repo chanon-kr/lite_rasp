@@ -208,7 +208,9 @@ while(video.isOpened()):
         cal_restart = round((now - start_time).total_seconds()/3600,2)
         print('start @ :',start_time ,'\nCurrent Run {}/{} hours'.format(cal_restart,restart_limit))
         if cal_restart > restart_limit : 
-            print('Finish Test')
+            print('Finish Test, will close in next 15 second')
+            import time
+            time.sleep(15)
             break
 
     now_slot = (now.replace(minute = 0) + timedelta(minutes = int(now_minute/save_slot)*save_slot)).strftime('%Y%m%d%H%M')
