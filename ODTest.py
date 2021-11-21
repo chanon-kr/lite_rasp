@@ -136,17 +136,18 @@ for i in ['tmp','tmp/Found','tmp/All'] :
     if not os.path.isdir(i) : os.mkdir(i)
 
 start_time = datetime.now()
+first_run = True
 while(video.isOpened()):
-    print('Start Read Camera 2nd Test')
+    if first_run : print('Start Read Camera 2nd Test')
     # Acquire frame and resize to expected shape [1xHxWx3]
     ret, frame = video.read()
     now = datetime.now()
     if not ret:
         print('Camera 2nd Test Fail')
         break
-    print('Finish Read Camera 2nd Test')
+    if first_run : print('Finish Read Camera 2nd Test')
 
-    print('Start Loop Test')
+    if first_run : print('Start Loop Test')
     # Create Filename
     filename = now.strftime('%Y%m%d%H%M%S')
     # Create Check Point
@@ -212,7 +213,7 @@ while(video.isOpened()):
 
     now_slot = (now.replace(minute = 0) + timedelta(minutes = int(now_minute/save_slot)*save_slot)).strftime('%Y%m%d%H%M')
     show = 0
-    print('Start Run Model Part Test')
+    if first_run : print('Start Run Model Part Test')
     # Prep Image
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     frame_resized = frame_rgb[y1:y2,x1:x2]
@@ -285,8 +286,8 @@ while(video.isOpened()):
     if cv2.waitKey(1) == ord('q'):
         print('break')
         break
-    print('Finsih Run Model Part Test')
-
+    if first_run : print('Finsih Run Model Part Test')
+    first_run = False
 # Clean up
 video.release()
 cv2.destroyAllWindows()
