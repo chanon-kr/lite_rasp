@@ -15,6 +15,7 @@ from glob import glob
 with open('config.json', 'rb') as f :
     prep_config = json.load(f)
 
+print('Download Newest Model')
 gcs = da_tran_bucket(project_id = prep_config["gcp_projectid"] 
                     , bucket_name = prep_config["gcp_bucket"] 
                     , credential = prep_config["gcp_credential"] )
@@ -26,6 +27,7 @@ if not os.path.isdir('model{}'.format(model_folder)) :
 for file in ['model.tflite','label.txt','model_config.json'] :
     gcs.download(bucket_file = prep_config["model_folder"]  + '/{}'.format(file)
                  , local_file = 'model{}/{}'.format(model_folder,file)) 
+print('Finish Download')
 
 with open('model{}/model_config.json'.format(model_folder), 'rb') as f :
     config = json.load(f)
