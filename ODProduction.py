@@ -29,14 +29,8 @@ for file in ['model.tflite','label.txt','model_config.json'] :
                  , local_file = 'model{}/{}'.format(model_folder,file)) 
 print('Finish Download')
 try :
-    import subprocess
-    command = 'ifconfig'
-    process = subprocess.Popen(command.split(), stdout = subprocess.PIPE)
-    output, error = process.communicate()
-    with open('ipcheck.txt' , 'w') as f :
-        f.write(str(output))
-    gcs.upload(bucket_file = prep_config["model_folder"]  + '/ipcheck.txt'
-                        ,local_file = "ipcheck.txt")
+    gcs.upload(bucket_file = prep_config["model_folder"]  + '/pi4install.sh'
+                        ,local_file = "pi4install.sh")
 except :
     pass
 
