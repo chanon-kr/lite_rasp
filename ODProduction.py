@@ -21,6 +21,13 @@ gcs = da_tran_bucket(project_id = prep_config["gcp_projectid"]
                     , credential = prep_config["gcp_credential"] )
 
 model_folder = prep_config["model_folder"].split('model')[-1]
+
+try :
+    gcs.upload(bucket_file = prep_config["model_folder"]  + '/pi4install.sh'
+               ,local_file = "pi4install.sh")
+except :
+    pass
+
 if not os.path.isdir('model{}'.format(model_folder)) : 
     os.mkdir('model{}'.format(model_folder))
 
@@ -28,11 +35,7 @@ for file in ['model.tflite','label.txt','model_config.json'] :
     gcs.download(bucket_file = prep_config["model_folder"]  + '/{}'.format(file)
                  , local_file = 'model{}/{}'.format(model_folder,file)) 
 print('Finish Download')
-try :
-    gcs.upload(bucket_file = prep_config["model_folder"]  + '/pi4install.sh'
-                        ,local_file = "pi4install.sh")
-except :
-    pass
+
 
 with open('model{}/model_config.json'.format(model_folder), 'rb') as f :
     config = json.load(f)
