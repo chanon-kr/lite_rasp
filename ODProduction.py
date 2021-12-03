@@ -126,6 +126,7 @@ elif VIDEO_NAME != '0' :
     video = cv2.VideoCapture(VIDEO_PATH)
 else :
     video = cv2.VideoCapture(0)
+    video.set(cv2.CAP_PROP_FPS, 60)
 
 # Video Size
 imW = video.get(cv2.CAP_PROP_FRAME_WIDTH)
