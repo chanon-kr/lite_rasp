@@ -6,6 +6,12 @@
 
 # Import packages
 import os,json ,cv2 , sys, argparse, shutil
+
+try :
+    import psutil
+except :
+    os.system('pip install psutil')
+
 import numpy as np
 import importlib.util
 from datetime import datetime, timedelta
@@ -13,10 +19,6 @@ from py_topping.data_connection.gcp import da_tran_bucket
 from py_topping.general_use import lazy_LINE
 from glob import glob
 
-try :
-    import psutil
-except :
-    os.system('pip install psutil')
 
 with open('config.json', 'rb') as f :
     prep_config = json.load(f)
