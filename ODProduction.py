@@ -182,9 +182,12 @@ while(video.isOpened()):
                 img_array_i = []
                 for i in glob('tmp/All/*.png'):
                     img_i = cv2.imread(i)
-                    height_i, width_i, layers_i = img_i.shape
-                    size_i = (width_i,height_i)
-                    img_array_i.append(img_i)
+                    if type(img_i) == type(None) :
+                        pass
+                    else :
+                        height_i, width_i, layers_i = img_i.shape
+                        size_i = (width_i,height_i)
+                        img_array_i.append(img_i)
                 out = cv2.VideoWriter('tmp/clip.avi',cv2.VideoWriter_fourcc(*'DIVX'), fps, size_i)   
                 for i in range(len(img_array_i)):
                     out.write(img_array_i[i])
@@ -290,7 +293,7 @@ while(video.isOpened()):
             break
     except Exception as e :
         line_sender = lazy_LINE(error_line)
-        line_sender.send(str(e))
+        line_sender.send('\n-----\nRasp PI at VCM\n-----\n{}'.format(str(e)))
 
 # Clean up
 video.release()
