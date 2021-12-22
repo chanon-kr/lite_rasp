@@ -6,12 +6,6 @@
 
 # Import packages
 import os,json ,cv2 , sys, argparse, shutil
-
-try :
-    import psutil
-except :
-    os.system('pip install psutil')
-
 import numpy as np
 import importlib.util
 from datetime import datetime, timedelta
