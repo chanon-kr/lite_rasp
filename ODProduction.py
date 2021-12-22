@@ -36,7 +36,7 @@ try :
     start_now = datetime.now().strftime('%Y%m%d%H%M')
     with open("tmp/lastrestart.txt" , "w") as f :
         f.write(start_now)
-    gcs.upload(bucket_file = prep_config["model_folder"]  + '/lastrestart.sh'
+    gcs.upload(bucket_file = prep_config["model_folder"]  + '/lastrestart.txt'
                ,local_file = "tmp/lastrestart.txt")
 except :
     pass
