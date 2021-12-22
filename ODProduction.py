@@ -13,6 +13,11 @@ from py_topping.data_connection.gcp import da_tran_bucket
 from py_topping.general_use import lazy_LINE
 from glob import glob
 
+try :
+    import psutil
+except :
+    os.system('pip install psutil')
+
 with open('config.json', 'rb') as f :
     prep_config = json.load(f)
 
@@ -26,6 +31,11 @@ model_folder = prep_config["model_folder"].split('model')[-1]
 try :
     gcs.upload(bucket_file = prep_config["model_folder"]  + '/pi4install.sh'
                ,local_file = "pi4install.sh")
+    start_now = datetime.now().strftime('%Y%m%d%H%M')
+    with open("tmp/lastrestart.txt" , "w") as f :
+        f.write(start_now)
+    gcs.upload(bucket_file = prep_config["model_folder"]  + '/lastrestart.sh'
+               ,local_file = "tmp/lastrestart.txt")
 except :
     pass
 
@@ -58,7 +68,7 @@ gcp_credential = config["gcp_credential"]
 save_size = float(config["save_size"])
 show_window = bool(config["show_window"])
 restart_limit = float(config["restart_hour"])
-error_line = config['error_line']
+error_line = str(config['error_line'])
 # In[2]:
 
 
