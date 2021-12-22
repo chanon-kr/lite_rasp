@@ -13,6 +13,7 @@ from py_topping.data_connection.gcp import da_tran_bucket
 from py_topping.general_use import lazy_LINE
 from glob import glob
 
+for i in glob('tmp/All/*.png') : os.remove(i)
 
 with open('config.json', 'rb') as f :
     prep_config = json.load(f)
