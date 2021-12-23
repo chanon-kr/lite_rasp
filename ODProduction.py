@@ -153,8 +153,8 @@ for i in ['tmp','tmp/Found','tmp/All'] :
     if not os.path.isdir(i) : os.mkdir(i)
 
 start_time = datetime.now()
-while(video.isOpened()):
-    try :
+try :
+    while(video.isOpened()):
         # Acquire frame and resize to expected shape [1xHxWx3]
         ret, frame = video.read()
         now = datetime.now()
@@ -298,13 +298,13 @@ while(video.isOpened()):
         if cv2.waitKey(1) == ord('q'):
             print('break')
             break
-    except Exception as e :
-        line_sender = lazy_LINE(error_line)
-        line_sender.send('\n-----\nRasp PI at VCM\n-----\n{}'.format(str(e)) )
-        video.release()
-        cv2.destroyAllWindows()
-        line_sender.send('\n-----\nRasp PI at VCM\n-----\n{}'.format(str(i)), picture = str(i) )
-        raise Exception(str(e))
+except Exception as e :
+    line_sender = lazy_LINE(error_line)
+    line_sender.send('\n-----\nRasp PI at VCM\n-----\n{}'.format(str(e)) )
+    video.release()
+    cv2.destroyAllWindows()
+    line_sender.send('\n-----\nRasp PI at VCM\n-----\n{}'.format(str(i)), picture = str(i) )
+    raise Exception(str(e))
 
 # Clean up
 video.release()
