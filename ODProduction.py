@@ -300,9 +300,10 @@ while(video.isOpened()):
             break
     except Exception as e :
         line_sender = lazy_LINE(error_line)
-        line_sender.send('\n-----\nRasp PI at VCM\n-----\n{}'.format(str(e)), picture = i )
+        line_sender.send('\n-----\nRasp PI at VCM\n-----\n{}'.format(str(e)) )
         video.release()
         cv2.destroyAllWindows()
+        line_sender.send('\n-----\nRasp PI at VCM\n-----\n{}'.format(str(i)), picture = str(i) )
         raise Exception(str(e))
 
 # Clean up
