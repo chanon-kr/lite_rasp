@@ -16,7 +16,7 @@ from glob import glob
 for i in glob('tmp/All/*.png') : os.remove(i)
 
 check_restart_time = datetime.now()
-if (check_restart_time.hour == 6) & (check_restart_time.minute <= 30) :
+if (check_restart_time.hour%6 == 0) & (check_restart_time.minute <= 30) :
     os.system('sudo reboot')
 
 with open('config.json', 'rb') as f :
