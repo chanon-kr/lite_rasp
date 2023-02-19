@@ -1,3 +1,6 @@
+# This Repo is just a prototype and deprecated.
+Go to https://github.com/chanon-kr/py_topping_imagui.
+
 # For test TF Lite with Raspberry PI
 
 ## Note
